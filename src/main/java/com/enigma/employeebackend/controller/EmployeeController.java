@@ -30,4 +30,17 @@ public class EmployeeController {
     public ResponseEntity handleOptionsRequest() {
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/getEmployee")
+    private ResponseEntity<GenericResponse> getEmployee(){
+        return employeeService.getEmployee();
+    }
+
+    @GetMapping("getEmploee/{name}")
+    private ResponseEntity<GenericResponse> getEmployeeByName
+            (@PathVariable String name){
+        return employeeService.getEmployeeByName(name);
+    }
+
 }
