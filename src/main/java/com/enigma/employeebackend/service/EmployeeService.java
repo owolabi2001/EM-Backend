@@ -3,7 +3,7 @@ package com.enigma.employeebackend.service;
 
 import com.enigma.employeebackend.domain.Employee;
 import com.enigma.employeebackend.dto.EmployeeDto;
-import com.enigma.employeebackend.dto.GenericResponse;
+import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.repository.EmployeeRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -2,7 +2,7 @@ package com.enigma.employeebackend.controller;
 
 
 import com.enigma.employeebackend.dto.EmployeeDto;
-import com.enigma.employeebackend.dto.GenericResponse;
+import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
