@@ -1,4 +1,4 @@
-package com.enigma.employeebackend.dto;
+package com.enigma.employeebackend.dto.response;
 
 
 import lombok.AllArgsConstructor;

@@ -3,7 +3,7 @@ package com.enigma.employeebackend.service;
 
 import com.enigma.employeebackend.domain.Employee;
 import com.enigma.employeebackend.dto.EmployeeDto;
-import com.enigma.employeebackend.dto.GenericResponse;
+import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.repository.EmployeeRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +27,9 @@ public class EmployeeService {
         if(check==null){
             log.info("SAVE EMPLOYEE API");
             Employee employee = new Employee(employeeDto.getStaffName()
-                    , employeeDto.getEmail()
-                    , employeeDto.getStaffId()
-                    , employeeDto.getRole() );
+                    , employeeDto.getEmail().toLowerCase()
+                    , employeeDto.getStaffId().toLowerCase()
+                    , employeeDto.getRole().toLowerCase() );
             employeeRepo.save(employee);
             return new ResponseEntity<>(
                     new GenericResponse("00"
@@ -65,15 +65,30 @@ public class EmployeeService {
 
     public ResponseEntity<GenericResponse> getEmployeeByName(String name) {
         log.info("API to get Employee by Name");
-        Employee employee = employeeRepo.findEmployeeByStaffName(name);
+        Employee employee = employeeRepo.findEmployeeByStaffName(name.toLowerCase());
         if(employee==null){
             return new ResponseEntity<>(new GenericResponse("00"
-                    ,"no Employee with name"+name,null,null)
+                    ,"no Employee with "+name,null,null)
                     ,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(new GenericResponse("00"
                 ,""
                 ,employee
                 ,null),HttpStatus.ACCEPTED);
+    }
+
+    public ResponseEntity<GenericResponse> getEmployeesByName(String name){
+        log.info("API to get Employees By name Starting with");
+        List<Employee> employeeList = employeeRepo.findByStaffNameContainingIgnoreCase(name);
+        if(employeeList.size() == 0 ){
+            return new ResponseEntity<>(new GenericResponse("00"
+                    ,"no Employee with " + name,null,null)
+                    ,HttpStatus.ACCEPTED);
+        }
+        return new ResponseEntity<>(new GenericResponse("00"
+                ,"Employee that their name startswith " + name
+                ,employeeList
+                ,null)
+                ,HttpStatus.ACCEPTED);
     }
 }
