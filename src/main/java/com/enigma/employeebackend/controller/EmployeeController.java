@@ -43,4 +43,10 @@ public class EmployeeController {
         return employeeService.getEmployeeByName(name);
     }
 
+    @GetMapping("getEployee/{name}")
+    private ResponseEntity<GenericResponse> getEmployeeWithNameStartingwith(@PathVariable String name){
+        return employeeService.getEmployeesByName(name);
+
+    }
+
 }
