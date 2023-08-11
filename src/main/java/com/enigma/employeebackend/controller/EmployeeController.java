@@ -49,4 +49,9 @@ public class EmployeeController {
 
     }
 
+    @DeleteMapping("/deleteEmployee")
+    private ResponseEntity<GenericResponse> deleteEmployee(@RequestParam String name){
+        return employeeService.deleteEmployee(name);
+    }
+
 }

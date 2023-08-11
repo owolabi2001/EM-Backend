@@ -26,7 +26,7 @@ public class EmployeeService {
         Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
         if(check==null){
             log.info("SAVE EMPLOYEE API");
-            Employee employee = new Employee(employeeDto.getStaffName()
+            Employee employee = new Employee(employeeDto.getStaffName().toLowerCase()
                     , employeeDto.getEmail().toLowerCase()
                     , employeeDto.getStaffId().toLowerCase()
                     , employeeDto.getRole().toLowerCase() );
@@ -68,7 +68,7 @@ public class EmployeeService {
         Employee employee = employeeRepo.findEmployeeByStaffName(name.toLowerCase());
         if(employee==null){
             return new ResponseEntity<>(new GenericResponse("00"
-                    ,"no Employee with "+name,null,null)
+                    ,"no Employee with "+ name,null,null)
                     ,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(new GenericResponse("00"
@@ -78,7 +78,7 @@ public class EmployeeService {
     }
 
     public ResponseEntity<GenericResponse> getEmployeesByName(String name){
-        log.info("API to get Employees By name Starting with");
+        log.info("API to get Employees By name Starting with ",name);
         List<Employee> employeeList = employeeRepo.findByStaffNameContainingIgnoreCase(name);
         if(employeeList.size() == 0 ){
             return new ResponseEntity<>(new GenericResponse("00"
@@ -88,6 +88,25 @@ public class EmployeeService {
         return new ResponseEntity<>(new GenericResponse("00"
                 ,"Employee that their name startswith " + name
                 ,employeeList
+                ,null)
+                ,HttpStatus.ACCEPTED);
+    }
+
+    public ResponseEntity<GenericResponse> deleteEmployee(String name) {
+        log.info("API to delete Employee from the Database");
+        Employee employee = employeeRepo.findEmployeeByStaffName(name.toLowerCase());
+        System.out.println(employee);
+        if(employee==null){
+            return new ResponseEntity<>(new GenericResponse("11"
+                    ,"No Employee with the name " + name
+                    ,null
+                    ,null)
+                    ,HttpStatus.ACCEPTED);
+        }
+        employeeRepo.delete(employee);
+        return new ResponseEntity<>(new GenericResponse("00"
+                ,"Employee " + name +" Deleted"
+                , null
                 ,null)
                 ,HttpStatus.ACCEPTED);
     }
