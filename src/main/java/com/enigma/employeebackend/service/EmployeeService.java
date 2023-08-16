@@ -5,13 +5,22 @@ import com.enigma.employeebackend.domain.Employee;
 import com.enigma.employeebackend.dto.EmployeeDto;
 import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.repository.EmployeeRepo;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
+
 
 
 @Service
@@ -123,4 +132,42 @@ public class EmployeeService {
     }
 
 
+    public ResponseEntity<GenericResponse> saveEmployeeByCSV(MultipartFile file) {
+        if(file.isEmpty()){
+            return new ResponseEntity(new GenericResponse("11","No file sent", null,null), HttpStatus.OK);
+        }
+        try{
+            List<Employee> employeeList = new ArrayList<>();
+            Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+
+            CsvToBean<EmployeeDto> roomCsvToBean = new CsvToBeanBuilder(reader)
+                    .withType(EmployeeDto.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            List<EmployeeDto> employeeDtoList = roomCsvToBean.parse();
+
+            log.info(" Employee List: {}",employeeDtoList);
+
+
+
+            for(EmployeeDto employeeDto: employeeDtoList){
+                Employee employee = new Employee();
+                employee.setStaffName(employeeDto.getStaffName());
+                employee.setEmail(employeeDto.getEmail());
+                employee.setRole(employeeDto.getRole());
+                employee.setStaffId(employee.getStaffId());
+                employeeList.add(employee);
+            }
+            employeeRepo.saveAll(employeeList);
+            return new ResponseEntity(
+                    new GenericResponse("00"
+                            , "Employees Saved"
+                            ,employeeList
+                            ,null),HttpStatus.CREATED);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
