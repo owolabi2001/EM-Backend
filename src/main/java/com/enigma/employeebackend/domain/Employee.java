@@ -1,9 +1,6 @@
 package com.enigma.employeebackend.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 
@@ -15,6 +12,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true,nullable = false)
     private String staffName;
     private String email;
     private String staffId;

@@ -25,6 +25,11 @@ public class EmployeeController {
 
     }
 
+    @PostMapping(path = "/addEmployee/CSV")
+    private ResponseEntity<GenericResponse> addEmployeeByCSV(){
+        return null;
+//        TODO: check if the file sent from the frontend is either CSV or excel and then convert it to CSV before upload
+    }
     @CrossOrigin(origins = "*", methods = RequestMethod.POST)
     @RequestMapping(method = RequestMethod.OPTIONS)
     public ResponseEntity handleOptionsRequest() {

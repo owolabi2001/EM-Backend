@@ -22,10 +22,20 @@ public class EmployeeService {
     private final EmployeeRepo employeeRepo;
 
     public ResponseEntity<GenericResponse> saveEmployee(EmployeeDto employeeDto) {
+        log.info("SAVE EMPLOYEE API");
+        Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName().toLowerCase());
 
-        Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
-        if(check==null){
-            log.info("SAVE EMPLOYEE API");
+        try{
+            if(check != null){
+                return new ResponseEntity<>(
+                        new GenericResponse("11",
+                                "Employee Already in the Database"
+                                ,employeeDto
+                                ,null)
+                        ,HttpStatus.ACCEPTED);
+
+
+            }
             Employee employee = new Employee(employeeDto.getStaffName().toLowerCase()
                     , employeeDto.getEmail().toLowerCase()
                     , employeeDto.getStaffId().toLowerCase()
@@ -38,13 +48,14 @@ public class EmployeeService {
                             ,null)
                     , HttpStatus.OK);
 
+
+        }catch (Exception e){
+            return new ResponseEntity<>(
+                    new GenericResponse("11",e.getMessage(),null,null), HttpStatus.OK
+            );
         }
-        return new ResponseEntity<>(
-                new GenericResponse("11",
-                        "Employee Already in the Database"
-                        ,employeeDto
-                        ,null)
-                ,HttpStatus.ACCEPTED);
+
+
 
     }
 
@@ -110,4 +121,6 @@ public class EmployeeService {
                 ,null)
                 ,HttpStatus.ACCEPTED);
     }
+
+
 }
