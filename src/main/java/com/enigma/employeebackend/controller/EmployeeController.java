@@ -6,6 +6,7 @@ import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "/employee")
@@ -25,6 +26,12 @@ public class EmployeeController {
 
     }
 
+    @PostMapping(path = "/addEmployee/CSV")
+    private ResponseEntity<GenericResponse> addEmployeeByCSV(@RequestParam("file") MultipartFile file){
+
+        return employeeService.saveEmployeeByCSV(file);
+//        TODO: check if the file sent from the frontend is either CSV or excel and then convert it to CSV before upload
+    }
     @CrossOrigin(origins = "*", methods = RequestMethod.POST)
     @RequestMapping(method = RequestMethod.OPTIONS)
     public ResponseEntity handleOptionsRequest() {

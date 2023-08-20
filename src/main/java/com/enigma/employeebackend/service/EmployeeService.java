@@ -5,13 +5,22 @@ import com.enigma.employeebackend.domain.Employee;
 import com.enigma.employeebackend.dto.EmployeeDto;
 import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.repository.EmployeeRepo;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
+
 
 
 @Service
@@ -22,10 +31,20 @@ public class EmployeeService {
     private final EmployeeRepo employeeRepo;
 
     public ResponseEntity<GenericResponse> saveEmployee(EmployeeDto employeeDto) {
+        log.info("SAVE EMPLOYEE API");
+        Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName().toLowerCase());
 
-        Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
-        if(check==null){
-            log.info("SAVE EMPLOYEE API");
+        try{
+            if(check != null){
+                return new ResponseEntity<>(
+                        new GenericResponse("11",
+                                "Employee Already in the Database"
+                                ,employeeDto
+                                ,null)
+                        ,HttpStatus.ACCEPTED);
+
+
+            }
             Employee employee = new Employee(employeeDto.getStaffName().toLowerCase()
                     , employeeDto.getEmail().toLowerCase()
                     , employeeDto.getStaffId().toLowerCase()
@@ -33,18 +52,19 @@ public class EmployeeService {
             employeeRepo.save(employee);
             return new ResponseEntity<>(
                     new GenericResponse("00"
-                            ,"Employe with name: "+employeeDto.getStaffName() +" saved"
+                            ,"Employee with name: "+employeeDto.getStaffName() +" saved"
                             ,employee
                             ,null)
                     , HttpStatus.OK);
 
+
+        }catch (Exception e){
+            return new ResponseEntity<>(
+                    new GenericResponse("11",e.getMessage(),null,null), HttpStatus.OK
+            );
         }
-        return new ResponseEntity<>(
-                new GenericResponse("11",
-                        "Employee Already in the Database"
-                        ,employeeDto
-                        ,null)
-                ,HttpStatus.ACCEPTED);
+
+
 
     }
 
@@ -52,7 +72,7 @@ public class EmployeeService {
         log.info("API to get 10 Employee's");
         List<Employee> employeeList;
         // this list if supposed to be list of 10 random employee's
-        employeeList = employeeRepo.findAll();
+        employeeList = employeeRepo.findRandom10Record();
 
         return new ResponseEntity<>(
                 new GenericResponse("00"
@@ -78,15 +98,15 @@ public class EmployeeService {
     }
 
     public ResponseEntity<GenericResponse> getEmployeesByName(String name){
-        log.info("API to get Employees By name Starting with ",name);
+        log.info("API to get Employees By name Starting with {}",name);
         List<Employee> employeeList = employeeRepo.findByStaffNameContainingIgnoreCase(name);
-        if(employeeList.size() == 0 ){
+        if(employeeList.isEmpty()){
             return new ResponseEntity<>(new GenericResponse("00"
                     ,"no Employee with " + name,null,null)
                     ,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(new GenericResponse("00"
-                ,"Employee that their name startswith " + name
+                ,"Employee that their name starts with " + name
                 ,employeeList
                 ,null)
                 ,HttpStatus.ACCEPTED);
@@ -109,5 +129,56 @@ public class EmployeeService {
                 , null
                 ,null)
                 ,HttpStatus.ACCEPTED);
+    }
+
+
+    public ResponseEntity<GenericResponse> saveEmployeeByCSV(MultipartFile file) {
+        if(file.isEmpty()){
+            return new ResponseEntity(new GenericResponse("11","No file sent", null,null), HttpStatus.OK);
+        }
+        try{
+            List<Employee> employeeList = new ArrayList<>();
+            Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+
+            CsvToBean<EmployeeDto> roomCsvToBean = new CsvToBeanBuilder(reader)
+                    .withType(EmployeeDto.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            List<EmployeeDto> employeeDtoList = roomCsvToBean.parse();
+
+            log.info(" Employee List: {}",employeeDtoList);
+
+
+            for(EmployeeDto employeeDto: employeeDtoList){
+                saveEmployee(employeeDto);
+//                Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
+//                if(check!=null){
+//                    continue;
+//
+//
+//                }
+//                else {
+//
+//                    Employee employee = new Employee();
+//                    employee.setStaffName(employeeDto.getStaffName().toLowerCase());
+//                    employee.setEmail(employeeDto.getEmail().toLowerCase());
+//                    employee.setRole(employeeDto.getRole().toLowerCase());
+//                    employee.setStaffId(employeeDto.getStaffId().toLowerCase());
+////                    employeeList.add(employee);
+//
+//                }
+
+            }
+//            employeeRepo.saveAll(employeeList);
+            return new ResponseEntity<>(
+                    new GenericResponse("00"
+                            , "Employees Saved"
+                            ,employeeList
+                            ,null),HttpStatus.CREATED);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
