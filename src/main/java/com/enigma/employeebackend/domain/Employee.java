@@ -7,19 +7,26 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "employee")
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+    @Column(name = "staffName",unique = false,nullable = false)
     @CsvBindByName(column = "Staff Name")
     private String staffName;
+
+    @Column(name = "email")
     @CsvBindByName(column = "email")
     private String email;
+
+    @Column(name = "staffId")
     @CsvBindByName(column = "staffId")
     private String staffId;
+
+    @Column(name = "role")
     @CsvBindByName(column = "role")
     private String role;
 

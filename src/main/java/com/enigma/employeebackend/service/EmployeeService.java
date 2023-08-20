@@ -52,7 +52,7 @@ public class EmployeeService {
             employeeRepo.save(employee);
             return new ResponseEntity<>(
                     new GenericResponse("00"
-                            ,"Employe with name: "+employeeDto.getStaffName() +" saved"
+                            ,"Employee with name: "+employeeDto.getStaffName() +" saved"
                             ,employee
                             ,null)
                     , HttpStatus.OK);
@@ -72,7 +72,7 @@ public class EmployeeService {
         log.info("API to get 10 Employee's");
         List<Employee> employeeList;
         // this list if supposed to be list of 10 random employee's
-        employeeList = employeeRepo.findAll();
+        employeeList = employeeRepo.findRandom10Record();
 
         return new ResponseEntity<>(
                 new GenericResponse("00"
@@ -98,15 +98,15 @@ public class EmployeeService {
     }
 
     public ResponseEntity<GenericResponse> getEmployeesByName(String name){
-        log.info("API to get Employees By name Starting with ",name);
+        log.info("API to get Employees By name Starting with {}",name);
         List<Employee> employeeList = employeeRepo.findByStaffNameContainingIgnoreCase(name);
-        if(employeeList.size() == 0 ){
+        if(employeeList.isEmpty()){
             return new ResponseEntity<>(new GenericResponse("00"
                     ,"no Employee with " + name,null,null)
                     ,HttpStatus.ACCEPTED);
         }
         return new ResponseEntity<>(new GenericResponse("00"
-                ,"Employee that their name startswith " + name
+                ,"Employee that their name starts with " + name
                 ,employeeList
                 ,null)
                 ,HttpStatus.ACCEPTED);
@@ -150,17 +150,28 @@ public class EmployeeService {
             log.info(" Employee List: {}",employeeDtoList);
 
 
-
             for(EmployeeDto employeeDto: employeeDtoList){
-                Employee employee = new Employee();
-                employee.setStaffName(employeeDto.getStaffName());
-                employee.setEmail(employeeDto.getEmail());
-                employee.setRole(employeeDto.getRole());
-                employee.setStaffId(employee.getStaffId());
-                employeeList.add(employee);
+                saveEmployee(employeeDto);
+//                Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
+//                if(check!=null){
+//                    continue;
+//
+//
+//                }
+//                else {
+//
+//                    Employee employee = new Employee();
+//                    employee.setStaffName(employeeDto.getStaffName().toLowerCase());
+//                    employee.setEmail(employeeDto.getEmail().toLowerCase());
+//                    employee.setRole(employeeDto.getRole().toLowerCase());
+//                    employee.setStaffId(employeeDto.getStaffId().toLowerCase());
+////                    employeeList.add(employee);
+//
+//                }
+
             }
-            employeeRepo.saveAll(employeeList);
-            return new ResponseEntity(
+//            employeeRepo.saveAll(employeeList);
+            return new ResponseEntity<>(
                     new GenericResponse("00"
                             , "Employees Saved"
                             ,employeeList
