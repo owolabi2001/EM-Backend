@@ -1,6 +1,5 @@
 package com.enigma.employeebackend.repository;
 
-
 import com.enigma.employeebackend.domain.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +18,7 @@ public interface EmployeeRepo extends JpaRepository<Employee,Long> {
     // An Optimized database query to get random employees from the dataBase
     @Query(value = "select * from employee TABLESAMPLE SYSTEM(60.0)",nativeQuery = true)
     List<Employee> findRandom10Record();
+
 
 
 
