@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,11 +38,16 @@ class EmployeeRepoTest {
     }
 
     @Test
-    @Disabled
     void findByStaffNameContainingIgnoreCase() {
 //        given
+        List<Employee> employeeList = List.of(new Employee("Owolabi Temi","owolabi.temi@lmu.edu.ng","i43oed","Imf")
+                ,new Employee("Owolabi Olamide","owolabi.olamide@gmail.com","p1672h","coordinator"));
+        underTest.saveAll(employeeList);
+        Employee employee = new Employee("Owolabi Temi","owolabi.temi@lmu.edu.ng","i43oed","Imf");
 //        when
+        List<Employee> employees= underTest.findByStaffNameContainingIgnoreCase("Owol");
 //        then
+        assertThat(employeeList).isEqualTo(employees);
 
     }
 
