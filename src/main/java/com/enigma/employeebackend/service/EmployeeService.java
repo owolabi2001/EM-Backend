@@ -30,7 +30,7 @@ public class EmployeeService {
 
     private final EmployeeRepo employeeRepo;
 
-    public ResponseEntity<GenericResponse> saveEmployee(EmployeeDto employeeDto) {
+    public ResponseEntity<GenericResponse> saveEmployee( EmployeeDto employeeDto) {
         log.info("SAVE EMPLOYEE API");
         Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName().toLowerCase());
 
@@ -152,25 +152,9 @@ public class EmployeeService {
 
             for(EmployeeDto employeeDto: employeeDtoList){
                 saveEmployee(employeeDto);
-//                Employee check = employeeRepo.findEmployeeByStaffName(employeeDto.getStaffName());
-//                if(check!=null){
-//                    continue;
-//
-//
-//                }
-//                else {
-//
-//                    Employee employee = new Employee();
-//                    employee.setStaffName(employeeDto.getStaffName().toLowerCase());
-//                    employee.setEmail(employeeDto.getEmail().toLowerCase());
-//                    employee.setRole(employeeDto.getRole().toLowerCase());
-//                    employee.setStaffId(employeeDto.getStaffId().toLowerCase());
-////                    employeeList.add(employee);
-//
-//                }
+
 
             }
-//            employeeRepo.saveAll(employeeList);
             return new ResponseEntity<>(
                     new GenericResponse("00"
                             , "Employees Saved"
