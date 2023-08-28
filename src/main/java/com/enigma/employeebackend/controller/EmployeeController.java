@@ -5,6 +5,7 @@ import com.enigma.employeebackend.dto.EmployeeDto;
 import com.enigma.employeebackend.dto.response.GenericResponse;
 import com.enigma.employeebackend.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,7 @@ public class EmployeeController {
 
     @PostMapping(path = "/addEmployee")
     private ResponseEntity<GenericResponse> addEmployee
-            (@RequestBody EmployeeDto employeeDto){
+            ( @RequestBody EmployeeDto employeeDto){
         return employeeService.saveEmployee(employeeDto);
 
     }
